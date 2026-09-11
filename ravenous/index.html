@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metroid Ravenous Count Down</title>
+    <meta name="description" content="A countdown to Metroid Ravenous.">
+
+    <meta property="og:title" content="Metroid Ravenous Count Down">
+    <meta property="og:description" content="A countdown to Metroid Ravenous.">
+    <meta property="og:image" content="https://USER.github.io/REPO/ravenous/metroid.png">
+    <meta property="og:type" content="website">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Metroid Ravenous Count Down">
+    <meta name="twitter:description" content="A countdown to Metroid Ravenous.">
+    <meta name="twitter:image" content="https://USER.github.io/REPO/ravenous/metroid.png">
+
+    <link rel="icon" type="image/x-icon" href="./favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+
+    <style>
+        @font-face {
+            font-family: 'MetroidFont';
+            src: url('./metroid.otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'MetroidFont', 'Courier New', monospace;
+            color: white;
+        }
+
+        .video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            background-color: #000;
+            overflow: hidden;
+        }
+
+        .video-background {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .aspect-ratio-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .content-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 100vw;
+            max-height: 56.25vw;
+            aspect-ratio: 16 / 9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @media (min-aspect-ratio: 16/9) {
+            .content-wrapper {
+                max-width: 177.78vh;
+                max-height: 100vh;
+            }
+        }
+
+        .countdown-container {
+            text-align: center;
+            z-index: 1;
+        }
+
+        .countdown {
+            font-size: 7vw;
+            font-weight: normal;
+            letter-spacing: 0.05em;
+            font-variant-numeric: tabular-nums;
+            font-feature-settings: "tnum";
+            white-space: nowrap;
+        }
+
+        .countdown .digit {
+            display: inline-block;
+            width: 0.62em;
+            text-align: center;
+        }
+
+        @media (min-aspect-ratio: 16/9) {
+            .countdown {
+                font-size: 12.44vh;
+            }
+        }
+
+        .logo-corner {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            z-index: 2;
+            padding: 3vmin;
+            pointer-events: none;
+        }
+
+        .logo-corner img {
+            display: block;
+            width: 20vmin;
+            max-width: 300px;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="video-container">
+        <video class="video-background" autoplay muted loop playsinline preload="auto">
+            <source src="./metroid.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <div class="aspect-ratio-container">
+        <div class="content-wrapper">
+            <div class="countdown-container">
+                <div class="countdown" id="countdown-display">T-0:00:00:00</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="logo-corner">
+        <img src="./nc-logo.png" alt="Metroid Ravenous Logo">
+    </div>
+
+    <script>
+        const T0 = new Date('2027-01-28T00:00:00-05:00');
+        const TEXT_SHADOW_STRENGTH = 10;
+
+        const countdownDisplay = document.getElementById('countdown-display');
+        const countdownContainer = document.querySelector('.countdown-container');
+
+        countdownContainer.style.textShadow = `0 2px ${TEXT_SHADOW_STRENGTH}px rgba(0, 0, 0, 0.5)`;
+
+        function renderCountdown(text) {
+            countdownDisplay.innerHTML = '';
+            for (const char of text) {
+                if (/[0-9]/.test(char)) {
+                    const span = document.createElement('span');
+                    span.className = 'digit';
+                    span.textContent = char;
+                    countdownDisplay.appendChild(span);
+                } else {
+                    countdownDisplay.appendChild(document.createTextNode(char));
+                }
+            }
+        }
+
+        function updateCountdown() {
+            const now = new Date();
+            const diff = T0 - now;
+
+            if (diff <= 0) {
+                renderCountdown('T+0:00:00:00');
+                return;
+            }
+
+            const totalSeconds = Math.floor(diff / 1000);
+            const days = Math.floor(totalSeconds / 86400);
+            const hours = Math.floor((totalSeconds % 86400) / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+
+            const daysStr = String(days);
+            const hoursStr = String(hours).padStart(2, '0');
+            const minutesStr = String(minutes).padStart(2, '0');
+            const secondsStr = String(seconds).padStart(2, '0');
+
+            renderCountdown(`T-${daysStr}:${hoursStr}:${minutesStr}:${secondsStr}`);
+        }
+
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+    </script>
+</body>
+</html>
