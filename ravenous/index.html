@@ -476,7 +476,7 @@
             };
         }
 
-        fetch('/sidehost/ravenous/config.json')
+        fetch('./config.json')
             .then(function (res) { return res.json(); })
             .then(function (config) {
                 injectFont(config.font && config.font.path);
