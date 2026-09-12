@@ -1,0 +1,32 @@
+{
+    "font": {
+        "path": "./duo.ttf"
+    },
+    "videos": [
+        "./duo.mp4"
+    ],
+    "targetDate": "2026-10-23T00:00:00-04:00",
+    "counter": {
+        "useDays": true
+    },
+    "topText": "",
+    "bottomText": "iPhone Duo",
+    "textShadowStrength": 10,
+    "logo": {
+        "path": null
+    },
+    "audioToggle": {
+        "enabled": true,
+        "position": "bottom_left",
+        "paddingHorizontal": 12,
+        "paddingVertical": 12
+    },
+    "mediaCredit": {
+        "text": "Media Credit",
+        "link": "",
+        "position": "bottom_right",
+        "hideUntilHover": true,
+        "textShadow": true,
+        "color": "#ffffff"
+    }
+}

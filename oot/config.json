@@ -1,0 +1,33 @@
+{
+    "font": {
+        "path": "./zelda.otf"
+    },
+    "videos": [
+        "./zelda_1.mp4",
+        "./zelda_2.mp4"
+    ],
+    "targetDate": "2026-11-05T00:00:00-05:00",
+    "counter": {
+        "useDays": true
+    },
+    "topText": "The Legend of Zelda",
+    "bottomText": "Ocarina Of Time",
+    "textShadowStrength": 10,
+    "logo": {
+        "path": null
+    },
+    "audioToggle": {
+        "enabled": true,
+        "position": "bottom_left",
+        "paddingHorizontal": 12,
+        "paddingVertical": 12
+    },
+    "mediaCredit": {
+        "text": "Media Credit",
+        "link": "https://www.youtube.com/watch?v=wuFfiTEr2yc&t=1s",
+        "position": "bottom_right",
+        "hideUntilHover": true,
+        "textShadow": true,
+        "color": "#ffffff"
+    }
+}

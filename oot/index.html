@@ -4,33 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zelda OOT Count Down</title>
-    <meta name="description" content="A countdown to The Legend of Zelda: Ocarina of Time.">
+    <meta name="description" content="A countdown to The Legend of Zelda: Ocarina of Time.l">
 
     <meta property="og:title" content="Zelda OOT Count Down">
     <meta property="og:description" content="A countdown to The Legend of Zelda: Ocarina of Time.">
-    <meta property="og:image" content="https://kaynin319.github.io/countdowns/oot/zelda.png">
+    <meta property="og:image" content="https://kaynin319.github.io/countdowns/oot/embed.png">
     <meta property="og:type" content="website">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Zelda OOT Count Down">
     <meta name="twitter:description" content="A countdown to The Legend of Zelda: Ocarina of Time.">
-    <meta name="twitter:image" content="https://kaynin319.github.io/countdowns/oot/zelda.png">
+    <meta name="twitter:image" content="https://kaynin319.github.io/countdowns/oot/embed.png">
 
     <link rel="icon" type="image/x-icon" href="./favicon.ico">
     <link rel="apple-touch-icon" href="./apple-touch-icon.png">
 
-    <link rel="preload" as="video" href="./zelda_1.mp4" type="video/mp4">
-    <link rel="preload" as="video" href="./zelda_2.mp4" type="video/mp4">
-
     <style>
-        @font-face {
-            font-family: 'ZeldaFont';
-            src: url('./zelda.otf') format('opentype');
-            font-weight: normal;
-            font-style: normal;
-            font-display: swap;
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -44,7 +33,7 @@
         }
 
         body {
-            font-family: 'ZeldaFont', 'Courier New', monospace;
+            font-family: 'CountdownFont', 'Courier New', monospace;
             color: white;
         }
 
@@ -66,10 +55,9 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            opacity: 0;
-            will-change: opacity;
             backface-visibility: hidden;
             transform: translateZ(0);
+            will-change: opacity;
         }
 
         .aspect-ratio-container {
@@ -104,220 +92,461 @@
             z-index: 1;
         }
 
-        .mission-name {
+        .top-text, .bottom-text {
             font-size: 3vw;
             font-weight: normal;
             letter-spacing: 0.15em;
-            margin-bottom: 1.5vw;
             text-transform: uppercase;
         }
 
+        .top-text {
+            margin-bottom: 1.5vw;
+        }
+
+        .top-text:empty, .bottom-text:empty {
+            display: none;
+        }
+
         .countdown {
-            font-size: 7vw;
+            font-size: 8vw;
             font-weight: normal;
             letter-spacing: 0.05em;
             font-variant-numeric: tabular-nums;
-            margin-bottom: 1.5vw;
             font-feature-settings: "tnum";
             white-space: nowrap;
         }
 
-        .block-info {
-            font-size: 3vw;
-            font-weight: normal;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
+        .top-text:not(:empty) ~ .countdown,
+        .countdown:has(~ .bottom-text:not(:empty)) {
+            margin-bottom: 1.5vw;
         }
 
         @media (min-aspect-ratio: 16/9) {
-            .mission-name {
+            .top-text, .bottom-text {
                 font-size: 5.33vh;
             }
             .countdown {
-                font-size: 12.44vh;
+                font-size: 14.22vh;
             }
-            .block-info {
-                font-size: 5.33vh;
-            }
+        }
+
+        .corner-element {
+            position: fixed;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .corner-element img {
+            display: block;
+            height: auto;
+        }
+
+        .hover-hotspot {
+            position: fixed;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hover-hotspot.fade {
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .hover-hotspot.fade:hover,
+        .hover-hotspot.fade.revealed {
+            opacity: 1;
+        }
+
+        .hover-btn {
+            width: 64px;
+            height: 64px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.55);
+            color: white;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .credit-link {
+            font-family: inherit;
+            font-size: 1.4vh;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            text-decoration: none;
+            white-space: nowrap;
+            padding: 8px 14px;
+            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.4);
+            pointer-events: auto;
         }
     </style>
 </head>
 <body>
-    <div class="video-container">
-        <video class="video-background" id="video-a" muted loop="false" playsinline preload="auto" disablepictureinpicture>
-            <source src="./zelda_1.mp4" type="video/mp4">
-        </video>
-        <video class="video-background" id="video-b" muted loop="false" playsinline preload="auto" disablepictureinpicture>
-            <source src="./zelda_2.mp4" type="video/mp4">
-        </video>
-    </div>
+    <div class="video-container" id="video-container"></div>
 
     <div class="aspect-ratio-container">
         <div class="content-wrapper">
-            <div class="countdown-container">
-                <div class="mission-name">The Legend of Zelda</div>
-                <div class="countdown" id="countdown-display">T-0:00:00:00</div>
-                <div class="block-info">Ocarina Of Time</div>
+            <div class="countdown-container" id="countdown-container">
+                <div class="top-text" id="top-text"></div>
+                <div class="countdown" id="countdown-display"></div>
+                <div class="bottom-text" id="bottom-text"></div>
             </div>
         </div>
     </div>
 
+    <div class="corner-element" id="logo-element" style="display:none;">
+        <img id="logo-img" alt="Logo">
+    </div>
+
+    <div class="hover-hotspot" id="audio-hotspot" style="display:none;">
+        <button class="hover-btn" id="audio-toggle-btn" type="button" aria-label="Toggle audio">🔇</button>
+    </div>
+
+    <div class="hover-hotspot" id="credit-hotspot" style="display:none;">
+        <a class="credit-link" id="credit-link" target="_blank" rel="noopener noreferrer"></a>
+    </div>
+
     <script>
-        const T0 = new Date('2026-11-05T00:00:00-05:00');
-        const TEXT_SHADOW_STRENGTH = 10;
-        const HANDOFF_LEAD = 0.18;
+        function pad2(n) {
+            return String(n).padStart(2, '0');
+        }
 
-        const countdownDisplay = document.getElementById('countdown-display');
-        const countdownContainer = document.querySelector('.countdown-container');
-
-        countdownContainer.style.textShadow = `0 2px ${TEXT_SHADOW_STRENGTH}px rgba(0, 0, 0, 0.5)`;
-
-        function updateCountdown() {
-            const now = new Date();
-            const diff = T0 - now;
-
-            if (diff <= 0) {
-                countdownDisplay.textContent = 'T+0:00:00:00';
-                return;
+        function formatCountdown(diffMs, useDays) {
+            if (diffMs <= 0) {
+                return useDays ? 'T+0:00:00:00' : 'T+0:00:00';
             }
-
-            const totalSeconds = Math.floor(diff / 1000);
-            const days = Math.floor(totalSeconds / 86400);
-            const hours = Math.floor((totalSeconds % 86400) / 3600);
+            const totalSeconds = Math.floor(diffMs / 1000);
+            if (useDays) {
+                const days = Math.floor(totalSeconds / 86400);
+                const hours = Math.floor((totalSeconds % 86400) / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                const seconds = totalSeconds % 60;
+                return `T-${days}:${hours}:${pad2(minutes)}:${pad2(seconds)}`;
+            }
+            const hours = Math.floor(totalSeconds / 3600);
             const minutes = Math.floor((totalSeconds % 3600) / 60);
             const seconds = totalSeconds % 60;
-
-            const daysStr = String(days);
-            const hoursStr = String(hours).padStart(2, '0');
-            const minutesStr = String(minutes).padStart(2, '0');
-            const secondsStr = String(seconds).padStart(2, '0');
-
-            countdownDisplay.textContent = `T-${daysStr}:${hoursStr}:${minutesStr}:${secondsStr}`;
+            return `T-${hours}:${pad2(minutes)}:${pad2(seconds)}`;
         }
 
-        updateCountdown();
-        setInterval(updateCountdown, 1000);
-
-        const videos = [document.getElementById('video-a'), document.getElementById('video-b')];
-        let active = 0;
-        let switching = false;
-
-        videos.forEach(function (v) {
-            v.loop = false;
-            v.muted = true;
-            v.defaultMuted = true;
-            v.playbackRate = 1;
-        });
-
-        function safePlay(v) {
-            const p = v.play();
-            if (p && typeof p.catch === 'function') {
-                p.catch(function () {});
+        function applyPosition(el, position, padH, padV) {
+            el.style.top = 'auto';
+            el.style.bottom = 'auto';
+            el.style.left = 'auto';
+            el.style.right = 'auto';
+            el.style.transform = '';
+            switch (position) {
+                case 'top_left':
+                    el.style.top = padV + 'px';
+                    el.style.left = padH + 'px';
+                    break;
+                case 'top_right':
+                    el.style.top = padV + 'px';
+                    el.style.right = padH + 'px';
+                    break;
+                case 'bottom_left':
+                    el.style.bottom = padV + 'px';
+                    el.style.left = padH + 'px';
+                    break;
+                case 'top':
+                    el.style.top = padV + 'px';
+                    el.style.left = '50%';
+                    el.style.transform = 'translateX(-50%)';
+                    break;
+                case 'bottom':
+                    el.style.bottom = padV + 'px';
+                    el.style.left = '50%';
+                    el.style.transform = 'translateX(-50%)';
+                    break;
+                case 'left':
+                    el.style.left = padH + 'px';
+                    el.style.top = '50%';
+                    el.style.transform = 'translateY(-50%)';
+                    break;
+                case 'right':
+                    el.style.right = padH + 'px';
+                    el.style.top = '50%';
+                    el.style.transform = 'translateY(-50%)';
+                    break;
+                case 'bottom_right':
+                default:
+                    el.style.bottom = padV + 'px';
+                    el.style.right = padH + 'px';
+                    break;
             }
-            return p;
         }
 
-        function onNextFrame(v, cb) {
-            if (typeof v.requestVideoFrameCallback === 'function') {
-                v.requestVideoFrameCallback(function () { cb(); });
-            } else {
-                setTimeout(cb, 50);
-            }
-        }
-
-        function whenLoaded(v) {
-            return new Promise(function (resolve) {
-                if (v.readyState >= 3) {
-                    resolve();
-                    return;
-                }
-                const done = function () { resolve(); };
-                v.addEventListener('canplaythrough', done, { once: true });
-                v.addEventListener('loadeddata', done, { once: true });
-                v.load();
-            });
-        }
-
-        function warmDecoder(v) {
-            return new Promise(function (resolve) {
-                v.style.opacity = '0';
-                try { v.currentTime = 0; } catch (e) {}
-                safePlay(v);
-                onNextFrame(v, function () {
-                    v.pause();
-                    try { v.currentTime = 0; } catch (e) {}
-                    resolve();
-                });
-            });
-        }
-
-        function beginHandoff() {
-            if (switching) {
+        function injectFont(path) {
+            if (!path) {
                 return;
             }
-            switching = true;
+            const ext = path.split('.').pop().toLowerCase().split('?')[0];
+            const formatMap = { woff2: 'woff2', woff: 'woff', otf: 'opentype', ttf: 'truetype' };
+            const format = formatMap[ext] || 'woff2';
+            const style = document.createElement('style');
+            style.textContent = `@font-face{font-family:'CountdownFont';src:url('${path}') format('${format}');font-weight:normal;font-style:normal;font-display:swap;}`;
+            document.head.appendChild(style);
+        }
 
-            const curIdx = active;
-            const nxtIdx = curIdx === 0 ? 1 : 0;
-            const current = videos[curIdx];
-            const next = videos[nxtIdx];
+        function setupHoverHotspot(el, revealOnTap) {
+            el.classList.add('fade');
+            el.addEventListener('touchend', function (e) {
+                if (!el.classList.contains('revealed')) {
+                    e.preventDefault();
+                    el.classList.add('revealed');
+                    return;
+                }
+                if (revealOnTap) {
+                    revealOnTap(e);
+                }
+            }, { passive: false });
+        }
 
-            try { next.currentTime = 0; } catch (e) {}
-            safePlay(next);
+        function setupVideos(container, videoUrls) {
+            if (!videoUrls || videoUrls.length === 0) {
+                return { setMuted: function () {} };
+            }
 
-            onNextFrame(next, function () {
-                next.style.opacity = '1';
-                current.style.opacity = '0';
-                active = nxtIdx;
-                setTimeout(function () {
-                    current.pause();
-                    try { current.currentTime = 0; } catch (e) {}
-                    warmDecoder(current).then(function () {
-                        switching = false;
+            if (videoUrls.length === 1) {
+                const v = document.createElement('video');
+                v.className = 'video-background';
+                v.autoplay = true;
+                v.muted = true;
+                v.loop = true;
+                v.playsInline = true;
+                v.preload = 'auto';
+                v.src = videoUrls[0];
+                container.appendChild(v);
+                v.play().catch(function () {});
+                return {
+                    setMuted: function (muted) {
+                        v.muted = muted;
+                    }
+                };
+            }
+
+            const va = document.createElement('video');
+            const vb = document.createElement('video');
+            [va, vb].forEach(function (v) {
+                v.className = 'video-background';
+                v.muted = true;
+                v.playsInline = true;
+                v.preload = 'auto';
+                v.loop = false;
+                v.style.opacity = '0';
+                v.setAttribute('disablepictureinpicture', '');
+                container.appendChild(v);
+            });
+
+            let muted = true;
+            let activeEl = 0;
+            let currentSeq = 0;
+            let switching = false;
+            const elements = [va, vb];
+
+            function safePlay(v) {
+                const p = v.play();
+                if (p && typeof p.catch === 'function') {
+                    p.catch(function () {});
+                }
+            }
+
+            function onNextFrame(v, cb) {
+                if (typeof v.requestVideoFrameCallback === 'function') {
+                    v.requestVideoFrameCallback(function () { cb(); });
+                } else {
+                    setTimeout(cb, 50);
+                }
+            }
+
+            function whenLoaded(v) {
+                return new Promise(function (resolve) {
+                    if (v.readyState >= 3) {
+                        resolve();
+                        return;
+                    }
+                    const done = function () { resolve(); };
+                    v.addEventListener('canplaythrough', done, { once: true });
+                    v.addEventListener('loadeddata', done, { once: true });
+                    v.load();
+                });
+            }
+
+            function warmDecoder(v) {
+                return new Promise(function (resolve) {
+                    v.style.opacity = '0';
+                    try { v.currentTime = 0; } catch (e) {}
+                    safePlay(v);
+                    onNextFrame(v, function () {
+                        v.pause();
+                        try { v.currentTime = 0; } catch (e) {}
+                        resolve();
                     });
-                }, 150);
-            });
-        }
-
-        function tick() {
-            const v = videos[active];
-            if (v && !switching && isFinite(v.duration) && v.duration > 0) {
-                if (v.duration - v.currentTime <= HANDOFF_LEAD) {
-                    beginHandoff();
-                }
+                });
             }
-            requestAnimationFrame(tick);
-        }
 
-        videos.forEach(function (v) {
-            v.addEventListener('ended', function () {
-                if (videos[active] === v) {
-                    beginHandoff();
+            function loadIdleFor(idleEl, seqIndex) {
+                idleEl.src = videoUrls[seqIndex % videoUrls.length];
+                idleEl.muted = muted;
+                return whenLoaded(idleEl).then(function () {
+                    return warmDecoder(idleEl);
+                });
+            }
+
+            function beginHandoff() {
+                if (switching) {
+                    return;
+                }
+                switching = true;
+
+                const curIdx = activeEl;
+                const nxtIdx = curIdx === 0 ? 1 : 0;
+                const current = elements[curIdx];
+                const next = elements[nxtIdx];
+                const nextSeq = (currentSeq + 1) % videoUrls.length;
+
+                next.muted = muted;
+                try { next.currentTime = 0; } catch (e) {}
+                safePlay(next);
+
+                onNextFrame(next, function () {
+                    next.style.opacity = '1';
+                    current.style.opacity = '0';
+                    activeEl = nxtIdx;
+                    currentSeq = nextSeq;
+                    setTimeout(function () {
+                        current.pause();
+                        loadIdleFor(current, currentSeq + 1).then(function () {
+                            switching = false;
+                        });
+                    }, 150);
+                });
+            }
+
+            elements.forEach(function (v) {
+                v.addEventListener('ended', function () {
+                    if (elements[activeEl] === v) {
+                        beginHandoff();
+                    }
+                });
+            });
+
+            function tick() {
+                const v = elements[activeEl];
+                if (v && !switching && isFinite(v.duration) && v.duration > 0) {
+                    if (v.duration - v.currentTime <= 0.18) {
+                        beginHandoff();
+                    }
+                }
+                requestAnimationFrame(tick);
+            }
+
+            document.addEventListener('visibilitychange', function () {
+                if (!document.hidden) {
+                    safePlay(elements[activeEl]);
                 }
             });
-        });
 
-        document.addEventListener('visibilitychange', function () {
-            if (!document.hidden) {
-                safePlay(videos[active]);
-            }
-        });
-
-        Promise.all(videos.map(whenLoaded))
-            .then(function () {
-                return warmDecoder(videos[1]);
-            })
-            .then(function () {
-                active = 0;
-                videos[0].style.opacity = '1';
-                try { videos[0].currentTime = 0; } catch (e) {}
-                safePlay(videos[0]);
+            va.src = videoUrls[0];
+            Promise.all([whenLoaded(va), loadIdleFor(vb, 1)]).then(function () {
+                activeEl = 0;
+                currentSeq = 0;
+                va.style.opacity = '1';
+                try { va.currentTime = 0; } catch (e) {}
+                safePlay(va);
                 requestAnimationFrame(tick);
             });
 
-        document.addEventListener('click', function () {
-            safePlay(videos[active]);
-        }, { once: true });
+            document.addEventListener('click', function () {
+                safePlay(elements[activeEl]);
+            }, { once: true });
+
+            return {
+                setMuted: function (m) {
+                    muted = m;
+                    elements[activeEl].muted = m;
+                }
+            };
+        }
+
+        fetch('/sidehost/OOT/config.json')
+            .then(function (res) { return res.json(); })
+            .then(function (config) {
+                injectFont(config.font && config.font.path);
+
+                const topText = document.getElementById('top-text');
+                const bottomText = document.getElementById('bottom-text');
+                const countdownDisplay = document.getElementById('countdown-display');
+                const countdownContainer = document.getElementById('countdown-container');
+
+                topText.textContent = config.topText || '';
+                bottomText.textContent = config.bottomText || '';
+                countdownContainer.style.textShadow = `0 2px ${config.textShadowStrength || 10}px rgba(0, 0, 0, 0.5)`;
+
+                const T0 = new Date(config.targetDate);
+                const useDays = !!(config.counter && config.counter.useDays);
+
+                function updateCountdown() {
+                    countdownDisplay.textContent = formatCountdown(T0 - new Date(), useDays);
+                }
+                updateCountdown();
+                setInterval(updateCountdown, 1000);
+
+                const videoContainer = document.getElementById('video-container');
+                const videoApi = setupVideos(videoContainer, config.videos || []);
+
+                if (config.logo && config.logo.path) {
+                    const logoElement = document.getElementById('logo-element');
+                    const logoImg = document.getElementById('logo-img');
+                    logoImg.src = config.logo.path;
+                    logoImg.style.width = (config.logo.widthVmin || 20) + 'vmin';
+                    logoImg.style.maxWidth = (config.logo.maxWidthPx || 300) + 'px';
+                    applyPosition(logoElement, config.logo.position || 'bottom_right', config.logo.paddingHorizontal || 0, config.logo.paddingVertical || 0);
+                    logoElement.style.display = 'block';
+                }
+
+                if (config.audioToggle && config.audioToggle.enabled) {
+                    const audioHotspot = document.getElementById('audio-hotspot');
+                    const audioBtn = document.getElementById('audio-toggle-btn');
+                    applyPosition(audioHotspot, config.audioToggle.position || 'bottom_left', config.audioToggle.paddingHorizontal || 12, config.audioToggle.paddingVertical || 12);
+                    audioHotspot.style.display = 'flex';
+
+                    let muted = true;
+                    function toggleAudio() {
+                        muted = !muted;
+                        videoApi.setMuted(muted);
+                        audioBtn.textContent = muted ? '🔇' : '🔊';
+                    }
+                    audioBtn.addEventListener('click', toggleAudio);
+                    setupHoverHotspot(audioHotspot, toggleAudio);
+                }
+
+                if (config.mediaCredit && config.mediaCredit.text) {
+                    const creditHotspot = document.getElementById('credit-hotspot');
+                    const creditLink = document.getElementById('credit-link');
+                    creditLink.textContent = config.mediaCredit.text;
+                    creditLink.href = config.mediaCredit.link || '#';
+                    creditLink.style.color = config.mediaCredit.color || '#ffffff';
+                    if (config.mediaCredit.textShadow) {
+                        creditLink.style.textShadow = `0 2px ${config.textShadowStrength || 10}px rgba(0, 0, 0, 0.5)`;
+                    }
+                    applyPosition(creditHotspot, config.mediaCredit.position || 'bottom_right', 16, 16);
+                    creditHotspot.style.display = 'flex';
+
+                    if (config.mediaCredit.hideUntilHover) {
+                        setupHoverHotspot(creditHotspot);
+                    } else {
+                        creditHotspot.classList.add('revealed');
+                    }
+                }
+            });
     </script>
 </body>
 </html>

@@ -1,0 +1,37 @@
+{
+    "font": {
+        "path": "./metroid.otf"
+    },
+    "videos": [
+        "./metroid.mp4"
+    ],
+    "targetDate": "2027-01-28T00:00:00-05:00",
+    "counter": {
+        "useDays": true
+    },
+    "topText": "",
+    "bottomText": "",
+    "textShadowStrength": 10,
+    "logo": {
+        "path": "./nc-logo.png",
+        "position": "bottom_right",
+        "paddingHorizontal": 24,
+        "paddingVertical": 24,
+        "widthVmin": 20,
+        "maxWidthPx": 300
+    },
+    "audioToggle": {
+        "enabled": true,
+        "position": "bottom_left",
+        "paddingHorizontal": 12,
+        "paddingVertical": 12
+    },
+    "mediaCredit": {
+        "text": "Media Credit",
+        "link": "https://www.youtube.com/watch?v=ku-vSTDNsT8",
+        "position": "top_right",
+        "hideUntilHover": true,
+        "textShadow": true,
+        "color": "#ffffff"
+    }
+}

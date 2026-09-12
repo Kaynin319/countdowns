@@ -1,0 +1,37 @@
+{
+    "og": {
+        "image": "./embed.png",
+        "title": "Starship Flight 14",
+        "description": "Double Catch Rehearsal"
+     },
+    "font": {
+        "path": "./HKModular.woff2"
+    },
+    "videos": [
+        "./SFT.mp4"
+    ],
+    "targetDate": "2026-09-18T08:15:00-04:00",
+    "counter": {
+        "useDays": false
+    },
+    "topText": "Starship Flight 14",
+    "bottomText": "Double Catch Rehearsal",
+    "textShadowStrength": 10,
+    "logo": {
+        "path": null
+    },
+    "audioToggle": {
+        "enabled": true,
+        "position": "bottom_left",
+        "paddingHorizontal": 12,
+        "paddingVertical": 12
+    },
+    "mediaCredit": {
+        "text": "Media Credit",
+        "link": "https://youtu.be/8wT2v-rxEuo",
+        "position": "bottom_right",
+        "hideUntilHover": false,
+        "textShadow": true,
+        "color": "#ffffff"
+    }
+}

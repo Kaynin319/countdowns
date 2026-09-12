@@ -1,0 +1,23 @@
+{
+  "columns": [
+    ["Games"],
+    ["Space Flight"],
+    ["Tech"]
+  ],
+  "groups": {
+    "Games": [
+      { "name": "Ocarina of Time", "url": "https://kaynin319.github.io/countdowns/oot", "icon": "oot.png" },
+      { "name": "Metroid 6", "url": "https://kaynin319.github.io/countdowns/ravenous", "icon": "rav.png" }
+    ],
+    "Space Flight": [
+      { "name": "Starship Flight 14", "url": "https://kaynin319.github.io/countdowns/SFT", "icon": "sft.png" }
+    ],
+    "Tech": [
+      { "name": "iphone Duo", "url": "https://kaynin319.github.io/countdowns/duo", "icon": "duo.png" }
+    ]
+  },
+  "settings": {
+    "iconSize": 50,
+    "fontSize": 25
+  }
+}
