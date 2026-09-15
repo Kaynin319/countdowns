@@ -2,7 +2,7 @@
     "og": {
         "image": "./embed.png",
         "title": "Starship Flight 14",
-        "description": "Double Catch Rehearsal"
+        "description": "Operational Orbit"
      },
     "font": {
         "path": "./HKModular.woff2"
@@ -10,12 +10,12 @@
     "videos": [
         "./SFT.mp4"
     ],
-    "targetDate": "2026-09-18T08:15:00-04:00",
+    "targetDate": "2026-09-22T08:15:00-04:00",
     "counter": {
         "useDays": false
     },
     "topText": "Starship Flight 14",
-    "bottomText": "Double Catch Rehearsal",
+    "bottomText": "Operational Orbit",
     "textShadowStrength": 10,
     "logo": {
         "path": null
